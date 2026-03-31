@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MNZ Lineage · AI Baby Name Finder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Noto Sans Tamil', sans-serif; background: linear-gradient(135deg, #fef9f0, #fff5e8); min-height: 100vh; padding: 1rem; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header { background: linear-gradient(120deg, #2c5538, #1e3a2a); border-radius: 1.5rem; padding: 1.5rem; margin-bottom: 1.5rem; color: white; text-align: center; position: relative; }
+        .header h1 { font-size: 2rem; }
+        .header h1 span { background: linear-gradient(135deg, #ffd966, #ffb347); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .header p { opacity: .8; margin-top: .3rem; font-size: .9rem; }
+        .lang-buttons { position: absolute; top: 1rem; right: 1rem; display: flex; gap: .5rem; }
+        .lang-btn { background: rgba(255,255,255,.2); border: none; padding: .3rem .8rem; border-radius: 1.5rem; color: white; cursor: pointer; font-size: .85rem; }
+        .lang-btn.active { background: #ffd966; color: #2c5538; font-weight: 700; }
+        .alphabet-nav { background: white; border-radius: 1rem; padding: .8rem; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; }
+        .alpha-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: #f8ede2; font-weight: 700; cursor: pointer; font-size: .9rem; transition: all .2s; }
+        .alpha-btn:hover, .alpha-btn.active { background: #2c5538; color: white; }
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media(max-width:900px) { .main-grid { grid-template-columns: 1fr; } }
+        .search-section, .ai-section { background: white; border-radius: 1.5rem; padding: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,.05); }
+        .search-box { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .search-box input, .search-box select { flex: 1; padding: .8rem; border: 1px solid #e2d5c5; border-radius: 2rem; font-family: inherit; font-size: .9rem; min-width: 120px; }
+        button { background: #2c5538; border: none; padding: .8rem 1.2rem; border-radius: 2rem; color: white; font-weight: 600; cursor: pointer; font-family: inherit; transition: all .2s; }
+        button:hover { background: #1e3a2a; transform: translateY(-1px); }
+        .tts-btn { background: #c27e54; }
+        .mic-btn { background: #e67e22; min-width: 50px; }
+        .mic-active { background: #d35400; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+        .names-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .8rem; max-height: 550px; overflow-y: auto; margin-top: 1rem; }
+        .name-card { background: #fef7ef; border-radius: 1rem; padding: .8rem; text-align: center; border: 1px solid #f0e2d2; cursor: pointer; transition: all .2s; }
+        .name-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(44,85,56,.15); border-color: #2c5538; }
+        .name-text { font-size: 1.2rem; font-weight: 700; color: #2c5538; }
+        .name-origin { font-size: .7rem; color: #c27e54; font-weight: 600; margin-top: .2rem; text-transform: uppercase; }
+        .name-meaning-small { font-size: .72rem; color: #7a5a42; margin-top: .3rem; line-height: 1.4; }
+        .chat-container { background: #f8f5f0; border-radius: 1rem; height: 420px; display: flex; flex-direction: column; overflow: hidden; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .6rem; }
+        .message { padding: .6rem 1rem; border-radius: 1rem; max-width: 85%; word-wrap: break-word; font-size: .9rem; line-height: 1.5; }
+        .user-message { background: #2c5538; color: white; margin-left: auto; border-bottom-right-radius: .2rem; }
+        .ai-message { background: #e8e0d5; color: #2d2a24; border-bottom-left-radius: .2rem; }
+        .chat-input-area { display: flex; gap: .5rem; padding: .8rem; border-top: 1px solid #e2d5c5; }
+        .chat-input-area input { flex: 1; padding: .7rem 1rem; border: 1px solid #e2d5c5; border-radius: 2rem; font-family: inherit; font-size: .9rem; }
+        .loader { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-radius: 50%; border-top-color: white; animation: spin .6s linear infinite; vertical-align: middle; margin-right: .4rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; align-items: center; justify-content: center; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: white; border-radius: 1.5rem; padding: 2rem; max-width: 420px; width: 90%; text-align: center; position: relative; }
+        .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; color: #9b7a5c; font-size: 1.2rem; padding: .2rem .5rem; }
+        footer { text-align: center; margin-top: 1.5rem; color: #9b7a5c; font-size: .75rem; padding-bottom: 1rem; }
+        .google-cse { background: white; border-radius: 1.5rem; padding: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,.05); margin-top: 1.5rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>MNZ Lineage ✨ <span>AI Baby Name Finder</span></h1>
+        <p>🤖 Pure API · No Static Database · High-Quality Pronunciation</p>
+        <div class="lang-buttons">
+            <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+            <button class="lang-btn" data-lang="ta">🇱🇰 தமிழ்</button>
+        </div>
+    </div>
+
+    <div class="alphabet-nav" id="alphabetNav"></div>
+
+    <div class="main-grid">
+        <div class="search-section">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Theme: light, blessed, princess, moon, flower...">
+                <button class="mic-btn" id="searchMic">🎤</button>
+                <select id="originFilter">
+                    <option value="">All Origins</option>
+                    <option value="Arabic">Arabic</option>
+                    <option value="Persian">Persian</option>
+                    <option value="Turkish">Turkish</option>
+                    <option value="South Asian">South Asian</option>
+                </select>
+                <button id="searchBtn">✨ Generate Names</button>
+                <button id="resetBtn" style="background:#9b7a5c">Clear</button>
+            </div>
+            <div class="result-bar" style="display: flex; justify-content: space-between; align-items: center;">
+                <span id="resultCount" style="font-size: 0.75rem; color: #9b7a5c;">Click Generate to fetch names</span>
+                <button class="tts-btn" id="speakAllBtn">🔊 Speak All Names</button>
+            </div>
+            <div id="namesGrid" class="names-grid">
+                <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#9b7a5c">✨ Enter a theme or click the Mic ✨</div>
+            </div>
+        </div>
+
+        <div class="ai-section">
+            <div class="chat-container">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message ai-message">👋 Salam! I'm MNZ AI. Click the Mic to speak your question!</div>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chatInput" placeholder="Ask about names...">
+                    <button class="mic-btn" id="chatMic">🎤</button>
+                    <button id="sendBtn">Send</button>
+                    <button class="tts-btn" id="speakChatBtn">🔊</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="google-cse">
+        <div class="gcse-search"></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="nameModal">
+    <div class="modal">
+        <button class="modal-close" id="modalClose">✕</button>
+        <h2 id="modalName" style="color:#2c5538"></h2>
+        <div class="modal-origin" id="modalOrigin" style="color:#c27e54; text-transform:uppercase; font-size:0.8rem; font-weight:700; margin:0.5rem 0"></div>
+        <div class="modal-meaning" id="modalMeaning" style="margin-bottom:0.5rem"></div>
+        <div class="modal-meaning-ta" id="modalMeaningTa" style="color:#7a5a42"></div>
+        <button class="tts-btn" id="modalSpeak" style="margin-top:1rem">🔊 Pronounce</button>
+    </div>
+</div>
+
+<footer>🌙 MNZ Lineage · Voice Recognition Enabled · High-Quality Google TTS</footer>
+
+<script async src="https://cse.google.com/cse.js?cx=05139f0322b2b4f47"></script>
+<script>
+    const GROQ_API_KEY = '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';
+    const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+
+    let currentLang = 'en';
+    let currentLetter = '';
+    let lastNames = [];
+    let lastChatResponse = '';
+
+    // --- Alphabet Nav ---
+    const alphabetNav = document.getElementById('alphabetNav');
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').forEach(l => {
+        const btn = document.createElement('button');
+        btn.className = 'alpha-btn';
+        btn.textContent = l;
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.alpha-btn').forEach(b => b.classList.remove('active'));
+            if (currentLetter === l) { currentLetter = ''; } 
+            else { currentLetter = l; btn.classList.add('active'); generateNames(); }
+        });
+        alphabetNav.appendChild(btn);
+    });
+
+    // --- Lang Toggle ---
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentLang = btn.dataset.lang;
+            if(lastNames.length) renderNames(lastNames);
+        });
+    });
+
+    // --- High Quality TTS ---
+    function speak(text) {
+        const ttsLang = currentLang === 'ta' ? 'ta' : 'en';
+        const url = `https://translate.google.com/translate_tts?ie=UTF-8&tl=${ttsLang}&client=tw-ob&q=${encodeURIComponent(text)}`;
+        const audio = new Audio(url);
+        audio.play().catch(() => {
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = currentLang === 'ta' ? 'ta-IN' : 'en-US';
+            u.rate = 0.85;
+            window.speechSynthesis.speak(u);
+        });
+    }
+
+    // --- Voice Recognition ---
+    function startMic(targetInput, onComplete) {
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+        recognition.lang = currentLang === 'ta' ? 'ta-IN' : 'en-US';
+        recognition.onstart = () => { console.log("Listening..."); };
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            targetInput.value = transcript;
+            if (onComplete) onComplete();
+        };
+        recognition.start();
+    }
+
+    document.getElementById('searchMic').onclick = function() {
+        this.classList.add('mic-active');
+        startMic(document.getElementById('searchInput'), () => {
+            this.classList.remove('mic-active');
+            generateNames();
+        });
+    };
+
+    document.getElementById('chatMic').onclick = function() {
+        this.classList.add('mic-active');
+        startMic(document.getElementById('chatInput'), () => {
+            this.classList.remove('mic-active');
+            sendChat();
+        });
+    };
+
+    // --- Groq Logic ---
+    async function callGroq(prompt) {
+        const res = await fetch(GROQ_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+            body: JSON.stringify({
+                model: 'llama-3.3-70b-versatile',
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.8
+            })
+        });
+        const data = await res.json();
+        return data.choices[0].message.content;
+    }
+
+    async function generateNames() {
+        const theme = document.getElementById('searchInput').value.trim() || 'pure and unique';
+        const origin = document.getElementById('originFilter').value;
+        const btn = document.getElementById('searchBtn');
+        btn.innerHTML = '<span class="loader"></span> Generating...';
+        
+        const prompt = `Generate 12 ultra-rare Muslim girl names ${currentLetter ? `starting with "${currentLetter}"` : ''} themed around "${theme}" ${origin ? `with ${origin} origin` : ''}. Return ONLY JSON: [{"name":"...","meaning":"...","meaning_ta":"...","origin":"..."}]`;
+
+        try {
+            const raw = await callGroq(prompt);
+            const jsonMatch = raw.match(/\[[\s\S]*\]/);
+            lastNames = JSON.parse(jsonMatch[0]);
+            renderNames(lastNames);
+            document.getElementById('resultCount').textContent = `✅ ${lastNames.length} names found`;
+        } catch (e) {
+            document.getElementById('namesGrid').innerHTML = `<p style="grid-column:1/-1;text-align:center">Error generating names.</p>`;
+        } finally {
+            btn.innerHTML = '✨ Generate Names';
+        }
+    }
+
+    function renderNames(names) {
+        const grid = document.getElementById('namesGrid');
+        grid.innerHTML = names.map((n, i) => `
+            <div class="name-card" onclick="openModal(${i})">
+                <div class="name-text">${n.name}</div>
+                <div class="name-origin">${n.origin}</div>
+                <div class="name-meaning-small">${currentLang === 'ta' ? (n.meaning_ta || n.meaning) : n.meaning}</div>
+            </div>
+        `).join('');
+    }
+
+    function openModal(i) {
+        const n = lastNames[i];
+        document.getElementById('modalName').textContent = n.name;
+        document.getElementById('modalOrigin').textContent = n.origin;
+        document.getElementById('modalMeaning').textContent = '🌿 ' + n.meaning;
+        document.getElementById('modalMeaningTa').textContent = n.meaning_ta ? '🌸 ' + n.meaning_ta : '';
+        document.getElementById('nameModal').classList.add('open');
+        document.getElementById('modalSpeak').onclick = () => speak(n.name);
+    }
+
+    document.getElementById('modalClose').onclick = () => document.getElementById('nameModal').classList.remove('open');
+    document.getElementById('speakAllBtn').onclick = async () => {
+        for (let n of lastNames) {
+            speak(n.name);
+            await new Promise(r => setTimeout(r, 1800));
+        }
+    };
+
+    async function sendChat() {
+        const input = document.getElementById('chatInput');
+        const msg = input.value.trim();
+        if(!msg) return;
+        input.value = '';
+        
+        const messages = document.getElementById('chatMessages');
+        messages.innerHTML += `<div class="message user-message">${msg}</div>`;
+        
+        const prompt = `You are MNZ AI. Help find Muslim girl names based on: ${msg}. Reply concisely in ${currentLang === 'ta' ? 'Tamil' : 'English'}.`;
+        try {
+            const reply = await callGroq(prompt);
+            lastChatResponse = reply;
+            messages.innerHTML += `<div class="message ai-message">${reply}</div>`;
+        } catch(e) {
+            messages.innerHTML += `<div class="message ai-message">Error connecting...</div>`;
+        }
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    document.getElementById('sendBtn').onclick = sendChat;
+    document.getElementById('speakChatBtn').onclick = () => speak(lastChatResponse);
+    document.getElementById('searchBtn').onclick = generateNames;
+    document.getElementById('resetBtn').onclick = () => location.reload();
+</script>
+</body>
+</html>
