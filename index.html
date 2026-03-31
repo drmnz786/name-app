@@ -7,55 +7,138 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Inter', 'Noto Sans Tamil', sans-serif; background: linear-gradient(135deg, #fef9f0, #fff5e8); min-height: 100vh; padding: 1rem; }
+        
+        /* Light Theme (Default) */
+        :root {
+            --bg-gradient-start: #fef9f0;
+            --bg-gradient-end: #fff5e8;
+            --card-bg: #ffffff;
+            --text-primary: #2d2a24;
+            --text-secondary: #7a5a42;
+            --header-bg: linear-gradient(120deg, #2c5538, #1e3a2a);
+            --alphabet-bg: #ffffff;
+            --alphabet-btn-bg: #f8ede2;
+            --alphabet-btn-hover: #2c5538;
+            --name-card-bg: #fef7ef;
+            --name-card-border: #f0e2d2;
+            --name-text: #2c5538;
+            --chat-bg: #f8f5f0;
+            --message-ai-bg: #e8e0d5;
+            --message-ai-text: #2d2a24;
+            --input-border: #e2d5c5;
+            --btn-primary: #2c5538;
+            --btn-primary-hover: #1e3a2a;
+            --btn-tts: #c27e54;
+            --btn-mic: #e67e22;
+            --footer-text: #9b7a5c;
+            --shadow: 0 4px 12px rgba(0,0,0,.05);
+        }
+        
+        /* Dark Theme */
+        body.dark {
+            --bg-gradient-start: #1a1a2e;
+            --bg-gradient-end: #16213e;
+            --card-bg: #0f0f1a;
+            --text-primary: #e4e4e7;
+            --text-secondary: #a0a0b0;
+            --header-bg: linear-gradient(120deg, #1e3a2a, #0f2a1a);
+            --alphabet-bg: #1a1a2e;
+            --alphabet-btn-bg: #2d2d44;
+            --alphabet-btn-hover: #4a6b3c;
+            --name-card-bg: #1e1e2a;
+            --name-card-border: #2d2d44;
+            --name-text: #b8d9a6;
+            --chat-bg: #1a1a2e;
+            --message-ai-bg: #2d2d44;
+            --message-ai-text: #e4e4e7;
+            --input-border: #2d2d44;
+            --btn-primary: #4a6b3c;
+            --btn-primary-hover: #5d8a4a;
+            --btn-tts: #a86f4a;
+            --btn-mic: #d45a1a;
+            --footer-text: #6a6a7a;
+            --shadow: 0 4px 12px rgba(0,0,0,.3);
+        }
+        
+        body { 
+            font-family: 'Inter', 'Noto Sans Tamil', sans-serif; 
+            background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end)); 
+            min-height: 100vh; 
+            padding: 1rem;
+            transition: background 0.3s ease;
+            color: var(--text-primary);
+        }
         .container { max-width: 1400px; margin: 0 auto; }
-        .header { background: linear-gradient(120deg, #2c5538, #1e3a2a); border-radius: 1.5rem; padding: 1.5rem; margin-bottom: 1.5rem; color: white; text-align: center; position: relative; }
+        .header { background: var(--header-bg); border-radius: 1.5rem; padding: 1.5rem; margin-bottom: 1.5rem; color: white; text-align: center; position: relative; }
         .header h1 { font-size: 2rem; }
         .header h1 span { background: linear-gradient(135deg, #ffd966, #ffb347); -webkit-background-clip: text; background-clip: text; color: transparent; }
         .header p { opacity: .8; margin-top: .3rem; font-size: .9rem; }
+        .theme-btn { 
+            position: absolute; 
+            top: 1rem; 
+            left: 1rem; 
+            background: rgba(255,255,255,.2); 
+            border: none; 
+            padding: .5rem 1rem; 
+            border-radius: 2rem; 
+            color: white; 
+            cursor: pointer; 
+            font-size: .85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            backdrop-filter: blur(4px);
+        }
+        .theme-btn:hover { background: rgba(255,255,255,.3); }
         .lang-buttons { position: absolute; top: 1rem; right: 1rem; display: flex; gap: .5rem; }
         .lang-btn { background: rgba(255,255,255,.2); border: none; padding: .3rem .8rem; border-radius: 1.5rem; color: white; cursor: pointer; font-size: .85rem; }
         .lang-btn.active { background: #ffd966; color: #2c5538; font-weight: 700; }
-        .alphabet-nav { background: white; border-radius: 1rem; padding: .8rem; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; }
-        .alpha-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: #f8ede2; font-weight: 700; cursor: pointer; font-size: .9rem; transition: all .2s; }
-        .alpha-btn:hover, .alpha-btn.active { background: #2c5538; color: white; }
+        .alphabet-nav { background: var(--alphabet-bg); border-radius: 1rem; padding: .8rem; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .4rem; box-shadow: var(--shadow); }
+        .alpha-btn { width: 42px; height: 42px; border-radius: 50%; border: none; background: var(--alphabet-btn-bg); font-weight: 700; cursor: pointer; font-size: .9rem; transition: all .2s; color: var(--text-primary); }
+        .alpha-btn:hover, .alpha-btn.active { background: var(--alphabet-btn-hover); color: white; }
         .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
         @media(max-width:900px) { .main-grid { grid-template-columns: 1fr; } }
-        .search-section, .ai-section { background: white; border-radius: 1.5rem; padding: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,.05); }
+        .search-section, .ai-section { background: var(--card-bg); border-radius: 1.5rem; padding: 1.2rem; box-shadow: var(--shadow); transition: background 0.3s ease; }
         .search-box { display: flex; gap: .5rem; margin-bottom: 1rem; flex-wrap: wrap; }
-        .search-box input, .search-box select { flex: 1; padding: .8rem; border: 1px solid #e2d5c5; border-radius: 2rem; font-family: inherit; font-size: .9rem; min-width: 120px; }
-        button { background: #2c5538; border: none; padding: .8rem 1.2rem; border-radius: 2rem; color: white; font-weight: 600; cursor: pointer; font-family: inherit; transition: all .2s; }
-        button:hover { background: #1e3a2a; transform: translateY(-1px); }
-        .tts-btn { background: #c27e54; }
-        .mic-btn { background: #e67e22; min-width: 50px; }
+        .search-box input, .search-box select { flex: 1; padding: .8rem; border: 1px solid var(--input-border); border-radius: 2rem; font-family: inherit; font-size: .9rem; min-width: 120px; background: var(--card-bg); color: var(--text-primary); }
+        button { background: var(--btn-primary); border: none; padding: .8rem 1.2rem; border-radius: 2rem; color: white; font-weight: 600; cursor: pointer; font-family: inherit; transition: all .2s; }
+        button:hover { background: var(--btn-primary-hover); transform: translateY(-1px); }
+        .tts-btn { background: var(--btn-tts); }
+        .mic-btn { background: var(--btn-mic); min-width: 50px; }
         .mic-active { background: #d35400; animation: pulse 1.5s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
         .names-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .8rem; max-height: 550px; overflow-y: auto; margin-top: 1rem; }
-        .name-card { background: #fef7ef; border-radius: 1rem; padding: .8rem; text-align: center; border: 1px solid #f0e2d2; cursor: pointer; transition: all .2s; }
-        .name-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(44,85,56,.15); border-color: #2c5538; }
-        .name-text { font-size: 1.2rem; font-weight: 700; color: #2c5538; }
-        .name-origin { font-size: .7rem; color: #c27e54; font-weight: 600; margin-top: .2rem; text-transform: uppercase; }
-        .name-meaning-small { font-size: .72rem; color: #7a5a42; margin-top: .3rem; line-height: 1.4; }
-        .chat-container { background: #f8f5f0; border-radius: 1rem; height: 420px; display: flex; flex-direction: column; overflow: hidden; }
+        .name-card { background: var(--name-card-bg); border-radius: 1rem; padding: .8rem; text-align: center; border: 1px solid var(--name-card-border); cursor: pointer; transition: all .2s; }
+        .name-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); border-color: var(--btn-primary); }
+        .name-text { font-size: 1.2rem; font-weight: 700; color: var(--name-text); }
+        .name-origin { font-size: .7rem; color: var(--btn-tts); font-weight: 600; margin-top: .2rem; text-transform: uppercase; }
+        .name-meaning-small { font-size: .72rem; color: var(--text-secondary); margin-top: .3rem; line-height: 1.4; }
+        .chat-container { background: var(--chat-bg); border-radius: 1rem; height: 420px; display: flex; flex-direction: column; overflow: hidden; }
         .chat-messages { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .6rem; }
         .message { padding: .6rem 1rem; border-radius: 1rem; max-width: 85%; word-wrap: break-word; font-size: .9rem; line-height: 1.5; }
-        .user-message { background: #2c5538; color: white; margin-left: auto; border-bottom-right-radius: .2rem; }
-        .ai-message { background: #e8e0d5; color: #2d2a24; border-bottom-left-radius: .2rem; }
-        .chat-input-area { display: flex; gap: .5rem; padding: .8rem; border-top: 1px solid #e2d5c5; }
-        .chat-input-area input { flex: 1; padding: .7rem 1rem; border: 1px solid #e2d5c5; border-radius: 2rem; font-family: inherit; font-size: .9rem; }
+        .user-message { background: var(--btn-primary); color: white; margin-left: auto; border-bottom-right-radius: .2rem; }
+        .ai-message { background: var(--message-ai-bg); color: var(--message-ai-text); border-bottom-left-radius: .2rem; }
+        .chat-input-area { display: flex; gap: .5rem; padding: .8rem; border-top: 1px solid var(--input-border); }
+        .chat-input-area input { flex: 1; padding: .7rem 1rem; border: 1px solid var(--input-border); border-radius: 2rem; font-family: inherit; font-size: .9rem; background: var(--card-bg); color: var(--text-primary); }
         .loader { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.4); border-radius: 50%; border-top-color: white; animation: spin .6s linear infinite; vertical-align: middle; margin-right: .4rem; }
         @keyframes spin { to { transform: rotate(360deg); } }
         .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 100; align-items: center; justify-content: center; }
         .modal-overlay.open { display: flex; }
-        .modal { background: white; border-radius: 1.5rem; padding: 2rem; max-width: 420px; width: 90%; text-align: center; position: relative; }
-        .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; color: #9b7a5c; font-size: 1.2rem; padding: .2rem .5rem; }
-        footer { text-align: center; margin-top: 1.5rem; color: #9b7a5c; font-size: .75rem; padding-bottom: 1rem; }
-        .google-cse { background: white; border-radius: 1.5rem; padding: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,.05); margin-top: 1.5rem; }
+        .modal { background: var(--card-bg); border-radius: 1.5rem; padding: 2rem; max-width: 420px; width: 90%; text-align: center; position: relative; }
+        .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; color: var(--text-secondary); font-size: 1.2rem; padding: .2rem .5rem; }
+        footer { text-align: center; margin-top: 1.5rem; color: var(--footer-text); font-size: .75rem; padding-bottom: 1rem; }
+        .google-cse { background: var(--card-bg); border-radius: 1.5rem; padding: 1.2rem; box-shadow: var(--shadow); margin-top: 1.5rem; transition: background 0.3s ease; }
+        
+        /* Dark theme overrides for Google CSE */
+        body.dark .gcse-search {
+            filter: invert(0.9) hue-rotate(180deg);
+        }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
+        <button class="theme-btn" id="themeToggle">🌙 Dark Mode</button>
         <h1>MNZ Lineage ✨ <span>AI Baby Name Finder</span></h1>
         <p>🤖 Pure API · No Static Database · High-Quality Pronunciation</p>
         <div class="lang-buttons">
@@ -82,11 +165,11 @@
                 <button id="resetBtn" style="background:#9b7a5c">Clear</button>
             </div>
             <div class="result-bar" style="display: flex; justify-content: space-between; align-items: center;">
-                <span id="resultCount" style="font-size: 0.75rem; color: #9b7a5c;">Click Generate to fetch names</span>
+                <span id="resultCount" style="font-size: 0.75rem; color: var(--text-secondary);">Click Generate to fetch names</span>
                 <button class="tts-btn" id="speakAllBtn">🔊 Speak All Names</button>
             </div>
             <div id="namesGrid" class="names-grid">
-                <div style="grid-column:1/-1;text-align:center;padding:2rem;color:#9b7a5c">✨ Enter a theme or click the Mic ✨</div>
+                <div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--text-secondary);">✨ Enter a theme or click the Mic ✨</div>
             </div>
         </div>
 
@@ -113,15 +196,15 @@
 <div class="modal-overlay" id="nameModal">
     <div class="modal">
         <button class="modal-close" id="modalClose">✕</button>
-        <h2 id="modalName" style="color:#2c5538"></h2>
-        <div class="modal-origin" id="modalOrigin" style="color:#c27e54; text-transform:uppercase; font-size:0.8rem; font-weight:700; margin:0.5rem 0"></div>
+        <h2 id="modalName" style="color:var(--name-text);"></h2>
+        <div class="modal-origin" id="modalOrigin" style="color:var(--btn-tts); text-transform:uppercase; font-size:0.8rem; font-weight:700; margin:0.5rem 0"></div>
         <div class="modal-meaning" id="modalMeaning" style="margin-bottom:0.5rem"></div>
-        <div class="modal-meaning-ta" id="modalMeaningTa" style="color:#7a5a42"></div>
+        <div class="modal-meaning-ta" id="modalMeaningTa" style="color:var(--text-secondary);"></div>
         <button class="tts-btn" id="modalSpeak" style="margin-top:1rem">🔊 Pronounce</button>
     </div>
 </div>
 
-<footer>🌙 MNZ Lineage · Voice Recognition Enabled · High-Quality Google TTS</footer>
+<footer>🌙 MNZ Lineage · Voice Recognition Enabled · High-Quality Google TTS · Dark Mode Available</footer>
 
 <script async src="https://cse.google.com/cse.js?cx=05139f0322b2b4f47"></script>
 <script>
@@ -132,6 +215,28 @@
     let currentLetter = '';
     let lastNames = [];
     let lastChatResponse = '';
+
+    // --- Theme Toggle ---
+    const themeToggle = document.getElementById('themeToggle');
+    
+    // Check for saved theme preference
+    if (localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark');
+        themeToggle.innerHTML = '☀️ Light Mode';
+    } else {
+        themeToggle.innerHTML = '🌙 Dark Mode';
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        if (document.body.classList.contains('dark')) {
+            localStorage.setItem('theme', 'dark');
+            themeToggle.innerHTML = '☀️ Light Mode';
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeToggle.innerHTML = '🌙 Dark Mode';
+        }
+    });
 
     // --- Alphabet Nav ---
     const alphabetNav = document.getElementById('alphabetNav');
